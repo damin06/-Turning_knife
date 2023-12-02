@@ -8,8 +8,11 @@ public class PlayerAiming : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if(!IsServer)
-            return;
+
+    }
+
+    private void Start()
+    {
         _curDir = 1;
     }
 
@@ -21,7 +24,8 @@ public class PlayerAiming : NetworkBehaviour
         if (!IsOwner) return;
         //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         //_handTrm.rotation = Quaternion.Euler(0, 0, angle);
-        _handTrm.transform.rotation = new Quaternion(0, 0, transform.rotation.z + Time.deltaTime * _curDir, 0);
+        //_handTrm.transform.rotation = new Quaternion(0, 0, transform.rotation.z + Time.deltaTime * _curDir, 0);
+        _handTrm.transform.right = new Vector3(0, 0, transform.rotation.z + Time.deltaTime * _curDir);
         //_handTrm.right = dir;
     }
 }
