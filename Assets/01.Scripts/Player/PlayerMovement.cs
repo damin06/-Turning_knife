@@ -9,12 +9,10 @@ public class PlayerMovement : NetworkBehaviour
 
     private Vector2 _movementInput;
     private Rigidbody2D _rigidbody2D;
-    private PlayerAnimation _playerAnimation;
 
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        _playerAnimation = transform.Find("Visual").GetComponent<PlayerAnimation>();
     }
 
     public override void OnNetworkSpawn()

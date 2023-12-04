@@ -531,6 +531,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _handTrm: {fileID: 9012880071216587183}
+  _rotateSpeed: 180
+  _curDir:
+    m_InternalValue: 1
 --- !u!1 &5755662344815892232
 GameObject:
   m_ObjectHideFlags: 0

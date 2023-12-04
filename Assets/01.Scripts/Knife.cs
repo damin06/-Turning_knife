@@ -15,17 +15,15 @@ public class Knife : NetworkBehaviour
         _ownerClientID = OwnerClientId;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!IsServer)
+            return;
         if (collision.attachedRigidbody.TryGetComponent<Health>(out Health health))
             health.TakeDamage(_damage, _ownerClientID);
         else if (collision.TryGetComponent<Knife>(out Knife knife))
             knife._playerAiming.ChangeDir();
+
+        Debug.Log("Something Hit");
     }
 }
