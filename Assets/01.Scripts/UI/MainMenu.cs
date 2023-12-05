@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
         UserData userData = new UserData
         {
             username = name
+            ,color = Random.ColorHSV()
         };
 
         ClientSingleton.Instance.StartClient(userData);

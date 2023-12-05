@@ -8,6 +8,7 @@ using UnityEngine;
 public class UserData
 {
     public string username;
+    public Color color;
 }
 
 public class NetworkServer : IDisposable
@@ -86,6 +87,7 @@ public class NetworkServer : IDisposable
         {
             Debug.Log($"{userData.username} is Create complete!");
             player.SetUserName(userData.username);
+            player.SetEyeColor(userData.color);
         }
         else
         {

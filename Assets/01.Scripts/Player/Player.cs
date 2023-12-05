@@ -9,6 +9,7 @@ public class Player : NetworkBehaviour
 {
     [SerializeField] private TextMeshPro _nameText;
     [SerializeField] private CinemachineVirtualCamera _followCam;
+    [SerializeField] private SpriteRenderer _eyeRenderer;
 
     public static event Action<Player> OnPlayerSpawned;
     public static event Action<Player> OnPlayerDeSpawned;
@@ -52,7 +53,10 @@ public class Player : NetworkBehaviour
         }
     }
 
-
+    public FixedString32Bytes GetUserName()
+    {
+        return _username.Value;
+    }
 
     private void HandleNameChanged(FixedString32Bytes prev, FixedString32Bytes newValue)
     {
@@ -62,5 +66,10 @@ public class Player : NetworkBehaviour
     public void SetUserName(string username)
     {
         _username.Value = username;
+    }
+
+    public void SetEyeColor(Color eyeColor)
+    {
+        _eyeRenderer.color = eyeColor;
     }
 }
