@@ -25,27 +25,29 @@ public class PlayerAnimation : NetworkBehaviour
     public void AttackAnimationServerRpc()
     {
         _animator.SetTrigger(Eye_Attack);
-        AttackAnimationClientRpc();
     }
 
     [ClientRpc]
-    private void AttackAnimationClientRpc()
+    public void AttackAnimationClientRpc()
     {
         _animator.SetTrigger(Eye_Attack);
+        if(IsOwner)
+            AttackAnimationServerRpc();
     }
 
     [ServerRpc]
     public void HurtAnimationServerRpc()
     {
         _animator.SetTrigger(Eye_Hurt);
-        HurtAnimationClientRpc();
     }
 
     [ClientRpc]
-    private void HurtAnimationClientRpc()
+    public void HurtAnimationClientRpc()
     {
         _animator.SetTrigger(Eye_Hurt);
         if (IsOwner)
             _MMF_Player?.PlayFeedbacks();
+        if (IsOwner)
+            HurtAnimationServerRpc();
     }
 }

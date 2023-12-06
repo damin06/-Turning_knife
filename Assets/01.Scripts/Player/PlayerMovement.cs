@@ -50,8 +50,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        _irisPos.transform.localPosition = Vector3.Lerp(_irisPos.transform.position, _movementInput , Time.deltaTime * _eyeMoveSpeed);
-        //_irisPos.transform.localPosition = Vector3.Lerp(_irisPos.transform.position, _movementInput * _eyeMaxDist, Time.deltaTime * _eyeMoveSpeed);
+        _irisPos.transform.localPosition = Vector3.Lerp(_irisPos.transform.localPosition, _movementInput * _eyeMaxDist, Time.deltaTime * _eyeMoveSpeed);
         _rigidbody2D.velocity = _movementInput * _movementSpeed;
     }
 

@@ -10,11 +10,18 @@ public class Knife : NetworkBehaviour
     [SerializeField] private PlayerAiming _playerAiming;
     [SerializeField] private int _damage = 20;
     private NetworkVariable<int> knifeSocre = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    private float stretchFactor = 1.1f;
+    [SerializeField] private float stretchFactor = 1f;
 
     public void AddknifeSocre(int socre)
     {
         ModifyKnifeSocre(socre);
+    }
+
+    private void Update()
+    {
+        if (!IsOwner)
+            return;
+        transform.localRotation = Quaternion.Euler(0, 90, 0);
     }
 
     private void ModifyKnifeSocre(int socre)
@@ -43,7 +50,7 @@ public class Knife : NetworkBehaviour
         currentScale.y = Mathf.Max(0.1f, currentScale.y);
 
         // 스케일이 변경된 y 축 길이만큼 위치를 조정하여 오브젝트를 중앙에 유지
-        currentPosition.y += (currentScale.y - transform.localScale.y) * 0.5f;
+        currentPosition.y += Mathf.Clamp((currentScale.y - transform.localScale.y) * 0.5f, 1, 50);
 
         // 새로운 위치와 스케일을 적용합니다.
         transform.position = currentPosition;

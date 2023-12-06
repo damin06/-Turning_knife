@@ -55,7 +55,7 @@ public class Health : NetworkBehaviour
         LastHitDealerID = dealerID;
         ModifyHealth(-damageValue);
         DebugCurHealthClientRpc();
-        _playerAnimation.HurtAnimationServerRpc();
+        _playerAnimation.HurtAnimationClientRpc();
     }
 
     public void RestoreHealth(int healValue)

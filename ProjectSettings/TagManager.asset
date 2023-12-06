@@ -41,12 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: UI
-    uniqueID: 603399299
+  - name: backgorund
+    uniqueID: 1609054579
+    locked: 0
+  - name: deco
+    uniqueID: 2945884955
     locked: 0
   - name: EyeBackGround
     uniqueID: 1036417361
     locked: 0
   - name: Eye
     uniqueID: 2133715441
+    locked: 0
+  - name: UI
+    uniqueID: 603399299
     locked: 0

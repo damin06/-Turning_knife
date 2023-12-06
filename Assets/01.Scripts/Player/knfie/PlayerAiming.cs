@@ -24,7 +24,7 @@ public class PlayerAiming : NetworkBehaviour
     {
         if (!IsServer)
             return;
-        _playerAnimation.AttackAnimationServerRpc();
+        _playerAnimation.AttackAnimationClientRpc();
         _curDir.Value *= -1;
     }
     
