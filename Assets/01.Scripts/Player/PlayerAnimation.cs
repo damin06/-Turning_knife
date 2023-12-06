@@ -1,35 +1,51 @@
+using Unity.Netcode;
 using UnityEngine;
+using MoreMountains.Feedbacks;
 
-public class PlayerAnimation : MonoBehaviour
+public class PlayerAnimation : NetworkBehaviour
 {
     private Animator _animator;
-    private SpriteRenderer _spriteRenderer;
+    private MMF_Player _MMF_Player;
 
-    private readonly int _isMoveHash = Animator.StringToHash("is_move");
+    private readonly string Eye_Attack = "Attack";
+    private readonly string Eye_Hurt = "Hurt";
+
+    public override void OnNetworkSpawn()
+    {
+      
+    }
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _MMF_Player = GetComponentInChildren<MMF_Player>();
     }
 
-    public void SetMove(bool value)
+    [ServerRpc]
+    public void AttackAnimationServerRpc()
     {
-        _animator.SetBool(_isMoveHash, value);
+        _animator.SetTrigger(Eye_Attack);
+        AttackAnimationClientRpc();
     }
 
-    public void FlipController(float xDirection)
+    [ClientRpc]
+    private void AttackAnimationClientRpc()
     {
-        bool isRightTurn = xDirection > 0 && _spriteRenderer.flipX;
-        bool isLeftTurn = xDirection < 0 && !_spriteRenderer.flipX;
-        if(isRightTurn || isLeftTurn)
-        {
-            Flip();
-        }
+        _animator.SetTrigger(Eye_Attack);
     }
 
-    public void Flip()
+    [ServerRpc]
+    public void HurtAnimationServerRpc()
     {
-        _spriteRenderer.flipX = !_spriteRenderer.flipX;
+        _animator.SetTrigger(Eye_Hurt);
+        HurtAnimationClientRpc();
+    }
+
+    [ClientRpc]
+    private void HurtAnimationClientRpc()
+    {
+        _animator.SetTrigger(Eye_Hurt);
+        if (IsOwner)
+            _MMF_Player?.PlayFeedbacks();
     }
 }

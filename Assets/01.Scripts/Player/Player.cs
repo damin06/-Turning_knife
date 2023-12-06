@@ -10,16 +10,18 @@ public class Player : NetworkBehaviour
     [SerializeField] private TextMeshPro _nameText;
     [SerializeField] private CinemachineVirtualCamera _followCam;
     [SerializeField] private SpriteRenderer _eyeRenderer;
+    [SerializeField][Min(2f)] private float Knockback = 3f;
 
     public static event Action<Player> OnPlayerSpawned;
     public static event Action<Player> OnPlayerDeSpawned;
 
-
+    private Rigidbody2D _rb;
     public Health HealthCompo { get; private set; }
     private NetworkVariable<FixedString32Bytes> _username = new NetworkVariable<FixedString32Bytes>();
 
     private void Awake()
     {
+        _rb = GetComponent<Rigidbody2D>();
         HealthCompo = GetComponent<Health>();
         HealthCompo.OnDie += HandleDie;
     }
@@ -71,5 +73,22 @@ public class Player : NetworkBehaviour
     public void SetEyeColor(Color eyeColor)
     {
         _eyeRenderer.color = eyeColor;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!IsServer)
+            return;
+
+        if(collision.gameObject.TryGetComponent<Knife>(out Knife knife))
+        {
+            OnPlayerHitClientRpc(collision.contacts[0].normal);
+        }
+    }
+
+    [ClientRpc]
+    private void OnPlayerHitClientRpc(Vector3 normal)
+    {
+        _rb.AddForce(normal * Knockback, ForceMode2D.Impulse);
     }
 }

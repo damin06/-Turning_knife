@@ -264,7 +264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8beee30cee4337f49b038207c581bee9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerPrefab: {fileID: 1728518319817552976, guid: 014123f02a7f3b8438d4abd7d279c958, type: 3}
+  _playerPrefab: {fileID: 7143659204652996248, guid: 014123f02a7f3b8438d4abd7d279c958, type: 3}
   _serverPrefab: {fileID: 4331929856067194086, guid: a035682fe8403fe4d82b4ebfd12d2308, type: 3}
   _clientPrefab: {fileID: 4182426134146779569, guid: faf4d395b76e9ce4e9f4800bce9439e1, type: 3}
   _ipAddress: 127.0.0.1

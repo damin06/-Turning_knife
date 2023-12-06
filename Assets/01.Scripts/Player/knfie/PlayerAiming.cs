@@ -8,7 +8,7 @@ public class PlayerAiming : NetworkBehaviour
     [SerializeField] private Transform _handTrm;
     [SerializeField] private float _rotateSpeed = 3f;
     private float curZRoate;
-    private PlayerMovement _playerMovement;
+    private PlayerAnimation _playerAnimation;
 
     public override void OnNetworkSpawn()
     {
@@ -17,14 +17,14 @@ public class PlayerAiming : NetworkBehaviour
 
     private void Awake()
     {
-        _playerMovement = GetComponent<PlayerMovement>();   
+        _playerAnimation = GetComponent<PlayerAnimation>();   
     }
 
     public void ChangeDir()
     {
         if (!IsServer)
             return;
-        _playerMovement.AttackAnimationClientRpc();
+        _playerAnimation.AttackAnimationServerRpc();
         _curDir.Value *= -1;
     }
     

@@ -23,6 +23,7 @@ public class Knife : NetworkBehaviour
         SetKnifeScaleClientRpc();
     }
 
+
     [ClientRpc]
     private void SetKnifeScaleClientRpc()
     {
@@ -53,7 +54,8 @@ public class Knife : NetworkBehaviour
     {
         if (!IsServer)
             return;
-        if (collision.attachedRigidbody.TryGetComponent<Health>(out Health health))
+
+        if (collision.TryGetComponent<Health>(out Health health))
             health.TakeDamage(_damage, OwnerClientId);
 
         if (collision.TryGetComponent<Knife>(out Knife knife))
@@ -62,6 +64,25 @@ public class Knife : NetworkBehaviour
             DebugToClientRpc(OwnerClientId, knife.OwnerClientId, knife.GetComponentInParent<Player>().GetUserName());
         }
     }
+
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (!IsServer)
+    //        return;
+    //    if (collision.attachedRigidbody.TryGetComponent<Health>(out Health health))
+    //        health.TakeDamage(_damage, OwnerClientId);
+
+    //    if (collision.TryGetComponent<Knife>(out Knife knife))
+    //    {
+    //        knife._playerAiming.ChangeDir();
+    //        DebugToClientRpc(OwnerClientId, knife.OwnerClientId, knife.GetComponentInParent<Player>().GetUserName());
+    //    }
+
+    //    if(collision.attachedRigidbody.TryGetComponent<PlayerMovement>(out PlayerMovement player))
+    //    {
+    //        //Vector3 inVec = collision.GetContacts(0)
+    //    }
+    //}
 
     [ClientRpc]
     private void DebugToClientRpc(ulong owner,ulong hit, FixedString32Bytes hitName)

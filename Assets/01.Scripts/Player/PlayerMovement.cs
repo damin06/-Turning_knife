@@ -15,15 +15,11 @@ public class PlayerMovement : NetworkBehaviour
 
     private Vector2 _movementInput;
     private Rigidbody2D _rigidbody2D;
-    private Animator _animator;
 
-    private readonly string Eye_Attack = "Attack";
-    private readonly string Eye_Hurt = "Hurt";
 
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        _animator = GetComponent<Animator>();
     }
 
     public override void OnNetworkSpawn()
@@ -48,26 +44,20 @@ public class PlayerMovement : NetworkBehaviour
         if (!IsOwner)
             return;
 
-        _irisPos.transform.localPosition = Vector3.Lerp(_irisPos.transform.localPosition, _movementInput * _eyeMaxDist, Time.deltaTime * _eyeMoveSpeed);
     }
 
     private void FixedUpdate()
     {
         if (!IsOwner) return;
 
+        _irisPos.transform.localPosition = Vector3.Lerp(_irisPos.transform.position, _movementInput , Time.deltaTime * _eyeMoveSpeed);
+        //_irisPos.transform.localPosition = Vector3.Lerp(_irisPos.transform.position, _movementInput * _eyeMaxDist, Time.deltaTime * _eyeMoveSpeed);
         _rigidbody2D.velocity = _movementInput * _movementSpeed;
     }
 
-    [ClientRpc]
-    public void AttackAnimationClientRpc() 
+    [ServerRpc]
+    public void OnHitServerRPC(Vector3 vec)
     {
-        _animator.SetTrigger(Eye_Attack);
-    } 
-
-    [ClientRpc]
-    public void HurtAnimationClientRpc()
-    {
-        _animator.SetTrigger(Eye_Hurt);
+        _rigidbody2D.AddForce(vec);
     }
-    
 }

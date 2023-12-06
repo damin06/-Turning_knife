@@ -8,6 +8,7 @@ public class Health : NetworkBehaviour
 {
     public int maxHealth = 100;
     public NetworkVariable<int> currentHealth;
+    public UnityEvent<int, int, float> OnHealthChanged;
 
     private bool _isDead = false;
     
@@ -16,15 +17,21 @@ public class Health : NetworkBehaviour
     public ulong LastHitDealerID { get; private set; }
 
     [SerializeField] private GameObject coinPrefab;
-    private PlayerMovement _playerMovement;
+    private PlayerAnimation _playerAnimation;
 
     private void Awake()
     {
-        _playerMovement = GetComponent<PlayerMovement>();
+        _playerAnimation = GetComponent<PlayerAnimation>();
     }
 
     public override void OnNetworkSpawn()
     {
+        if (IsClient)
+        {
+            currentHealth.OnValueChanged += HandleChangeHealth;
+            HandleChangeHealth(0, maxHealth); //처음 시작
+        }
+
         if (!IsServer) return;
         currentHealth.Value = maxHealth; //서버만
         OnDie += SpawnCoin;
@@ -32,7 +39,15 @@ public class Health : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
+        if (IsClient)
+        {
+            currentHealth.OnValueChanged -= HandleChangeHealth;
+        }
+    }
 
+    private void HandleChangeHealth(int prev, int newValue)
+    {
+        OnHealthChanged?.Invoke(prev, newValue, (float)newValue / maxHealth);
     }
 
     public void TakeDamage(int damageValue, ulong dealerID)
@@ -40,7 +55,7 @@ public class Health : NetworkBehaviour
         LastHitDealerID = dealerID;
         ModifyHealth(-damageValue);
         DebugCurHealthClientRpc();
-        _playerMovement.HurtAnimationClientRpc();
+        _playerAnimation.HurtAnimationServerRpc();
     }
 
     public void RestoreHealth(int healValue)
