@@ -9,7 +9,7 @@ public class Knife : NetworkBehaviour
 {
     [SerializeField] private PlayerAiming _playerAiming;
     [SerializeField] private int _damage = 20;
-    private NetworkVariable<int> knifeSocre = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> knifeSocre = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private float stretchFactor = 1f;
 
     public void AddknifeSocre(int socre)
@@ -17,16 +17,34 @@ public class Knife : NetworkBehaviour
         ModifyKnifeSocre(socre);
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsServer)
+            return;
+        knifeSocre.OnValueChanged += (int previousValue, int newValue) => 
+        {
+            RankBoardBehaviour.Instance.onUserScoreChanged?.Invoke(OwnerClientId, newValue);
+        };
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        knifeSocre.OnValueChanged -= (int previousValue, int newValue) =>
+        {
+            RankBoardBehaviour.Instance.onUserScoreChanged?.Invoke(OwnerClientId, newValue);
+        };
+    }
+
     private void Update()
     {
         if (!IsOwner)
             return;
-        transform.localRotation = Quaternion.Euler(0, 90, 0);
+        //transform.localRotation = Quaternion.Euler(0, 0, -90);
     }
 
     private void ModifyKnifeSocre(int socre)
     {
-        knifeSocre.Value = Mathf.Clamp(knifeSocre.Value + socre, 0, 250);
+        knifeSocre.Value = Mathf.Clamp(knifeSocre.Value + socre, 0, 1000);
         SetKnifeScaleClientRpc();
     }
 
@@ -42,7 +60,8 @@ public class Knife : NetworkBehaviour
         Vector3 currentScale = transform.localScale;
 
         // y 축의 길이만 변경하고 다른 축은 고정시킵니다.
-        currentScale.y *= Mathf.Pow(stretchFactor, knifeSocre.Value);
+        //currentScale.y *= Mathf.Pow(stretchFactor, knifeSocre.Value);
+        currentScale.y = Mathf.Clamp(knifeSocre.Value * stretchFactor, 1, 5);
         currentScale.x = 1.0f; // x 축을 고정
         currentScale.z = 1.0f; // z 축을 고정
 
@@ -50,7 +69,7 @@ public class Knife : NetworkBehaviour
         currentScale.y = Mathf.Max(0.1f, currentScale.y);
 
         // 스케일이 변경된 y 축 길이만큼 위치를 조정하여 오브젝트를 중앙에 유지
-        currentPosition.y += Mathf.Clamp((currentScale.y - transform.localScale.y) * 0.5f, 1, 50);
+        currentPosition.y += (currentScale.y - transform.localScale.y) * 0.5f;
 
         // 새로운 위치와 스케일을 적용합니다.
         transform.position = currentPosition;

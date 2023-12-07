@@ -31,7 +31,6 @@ public class Player : NetworkBehaviour
     {
         GameObject particle = Instantiate(_dieParticle, transform.position, Quaternion.identity);
         particle.GetComponent<NetworkObject>().Spawn(true);
-        particle.GetComponent<ParticleSystem>().Play();
         Destroy(gameObject); //여기다가 파티클이나 뭐 죽는 효과 같은게 나와야겠지만...일단은.
     }
 

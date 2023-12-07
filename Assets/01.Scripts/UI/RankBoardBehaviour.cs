@@ -2,10 +2,28 @@ using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 public class RankBoardBehaviour : NetworkBehaviour
 {
+    public Action<ulong, int> onUserScoreChanged;
+    public static RankBoardBehaviour _instance;
+    public static RankBoardBehaviour Instance
+    {
+        get
+        {
+            if (_instance != null) return _instance;
+            _instance = FindObjectOfType<RankBoardBehaviour>();
+
+            if (_instance == null)
+            {
+                Debug.LogError("Server singleton does not exists");
+            }
+            return _instance;
+        }
+    }
+
+
+
     [SerializeField] private RecordUI _recordPrefab;
     [SerializeField] private RectTransform _recordParentTrm;
 
@@ -43,6 +61,25 @@ public class RankBoardBehaviour : NetworkBehaviour
         {
             ServerSingleton.Instance.NetServer.OnUserJoin += HandleUserJoin;
             ServerSingleton.Instance.NetServer.OnUserLeft += HandleUserLeft;
+            onUserScoreChanged += UpdateScore;
+        }
+    }
+
+    private void UpdateScore(ulong clientID, int score)
+    {
+        for (int i = 0; i < _rankList.Count; i++)
+        {
+            if (_rankList[i].clientID != clientID)
+                continue;
+
+            var oldItem = _rankList[i];
+            _rankList[i] = new RankBoardEntityState
+            {
+                clientID = clientID,
+                score = score,
+                playerName = oldItem.playerName,
+            };
+            break;
         }
     }
 
@@ -133,6 +170,35 @@ public class RankBoardBehaviour : NetworkBehaviour
         // 선택 : 갱신후에는 UIList를 정렬하고 
         // 정렬된 순서에 맞춰서 실제 UI의 순서도 변경한다.
         // RemoveFromParent => Add
+        for(int i = 1; i < _rankList.Count; i++)
+        {
+            for(int j = i; j < _rankList.Count - i; j++)
+            {
+                if (_rankList[i-1].score > _rankList[i].score)
+                {
+                    var newRank = _rankList[i];
+                    _rankList[i] = _rankList[i - 1];
+                    _rankList[i - 1] = newRank;
+                }
+            }
+        }
+
+        foreach (var item in _rankUIList)
+            item.gameObject.transform.SetParent(null);
+
+        for (int i = 0; i < _rankList.Count; i++)
+        {
+            foreach(var ui in _rankUIList)
+            {
+                if(ui.clientID == _rankList[i].clientID)
+                {
+                    ui.transform.SetParent(_recordParentTrm);
+                    ui.SetText(i+1, _rankList[i].playerName.ToString(), _rankList[i].score);
+                    break;
+                }
+            }
+        }
+
     }
 
     private void AddUIToList(RankBoardEntityState value)
@@ -159,5 +225,14 @@ public class RankBoardBehaviour : NetworkBehaviour
             Destroy(target.gameObject);
         }
         // 해당 게임오브젝트를 destroy()
+    }
+
+    private RecordUI FindrecordUI(ulong clientID)
+    {
+        RecordUI recordUI = null;
+        foreach (var ui in _rankUIList)
+            if (ui.clientID == clientID)
+                recordUI = ui;
+        return recordUI;
     }
 }
