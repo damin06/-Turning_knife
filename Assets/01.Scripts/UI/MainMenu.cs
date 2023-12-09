@@ -3,16 +3,12 @@ using UnityEngine;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField _txtUsername;
-
-
-    public void ConnectedToServer()
+    public void ConnectedToServer(string username)
     {
-        string name = _txtUsername.text;
         UserData userData = new UserData
         {
-            username = name
-            ,color = Random.ColorHSV()
+            username = username,
+            color = Random.ColorHSV()
         };
 
         ClientSingleton.Instance.StartClient(userData);

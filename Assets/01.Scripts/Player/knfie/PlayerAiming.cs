@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using Unity.Netcode;
 using UnityEngine;
@@ -6,18 +7,35 @@ public class PlayerAiming : NetworkBehaviour
 {
     public NetworkVariable<int> _curDir = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private Transform _handTrm;
-    [SerializeField] private float _rotateSpeed = 3f;
+    private NetworkVariable<float> _rotateSpeed = new NetworkVariable<float>(180, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private float curZRoate;
     private PlayerAnimation _playerAnimation;
+    private Knife _Knife;
 
     public override void OnNetworkSpawn()
     {
-       
+        if (!IsServer)
+            return;
+        _Knife.knifeSocre.OnValueChanged += (int previousValue, int newValue) =>
+        {
+            _rotateSpeed.Value /= newValue;
+        };
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (!IsServer)
+            return;
+        _Knife.knifeSocre.OnValueChanged -= (int previousValue, int newValue) =>
+        {
+            _rotateSpeed.Value /= newValue;
+        };
     }
 
     private void Awake()
     {
-        _playerAnimation = GetComponent<PlayerAnimation>();   
+        _playerAnimation = GetComponent<PlayerAnimation>();
+        _Knife = _handTrm.GetComponentInChildren<Knife>();
     }
 
     public void ChangeDir()
@@ -35,8 +53,8 @@ public class PlayerAiming : NetworkBehaviour
         curZRoate += Time.deltaTime;
 
         //_handTrm.transform.right = new Vector3(0, 0, transform.rotation.z + Time.deltaTime);
-        _handTrm.transform.rotation = Quaternion.Euler(0, 0, _rotateSpeed * curZRoate * _curDir.Value);
-        if (curZRoate * _rotateSpeed >= 360)
+        _handTrm.transform.rotation = Quaternion.Euler(0, 0, _rotateSpeed.Value * curZRoate * _curDir.Value);
+        if (curZRoate * _rotateSpeed.Value >= 360)
             curZRoate = 0;
     }
 }

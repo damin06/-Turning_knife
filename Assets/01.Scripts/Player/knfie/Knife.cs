@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Knife : NetworkBehaviour
 {
+    [SerializeField] private PlayerAnimation _playerAnimation;
     [SerializeField] private PlayerAiming _playerAiming;
     [SerializeField] private int _damage = 20;
     public NetworkVariable<int> knifeSocre = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -54,26 +56,16 @@ public class Knife : NetworkBehaviour
     {
         if (!IsOwner)
             return;
+        float scale = Mathf.Clamp(knifeSocre.Value * stretchFactor, 1, 5);
 
-        // 현재 위치와 크기를 가져옵니다.
-        Vector3 currentPosition = transform.position;
-        Vector3 currentScale = transform.localScale;
+        if (scale <= 4)
+            _playerAnimation.ChangeEyeCloseServerRpc();
 
-        // y 축의 길이만 변경하고 다른 축은 고정시킵니다.
-        //currentScale.y *= Mathf.Pow(stretchFactor, knifeSocre.Value);
-        currentScale.y = Mathf.Clamp(knifeSocre.Value * stretchFactor, 1, 5);
-        currentScale.x = 1.0f; // x 축을 고정
-        currentScale.z = 1.0f; // z 축을 고정
+        Vector3 newScale = new Vector3(scale, scale, transform.localScale.z);
+        transform.localScale = newScale;
 
-        // 길이가 음수가 되지 않도록 보정
-        currentScale.y = Mathf.Max(0.1f, currentScale.y);
-
-        // 스케일이 변경된 y 축 길이만큼 위치를 조정하여 오브젝트를 중앙에 유지
-        currentPosition.y += (currentScale.y - transform.localScale.y) * 0.5f;
-
-        // 새로운 위치와 스케일을 적용합니다.
-        transform.position = currentPosition;
-        transform.localScale = currentScale;
+        // z로테이션을 -90으로 고정하기
+        transform.rotation = Quaternion.Euler(0, 0, -90);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

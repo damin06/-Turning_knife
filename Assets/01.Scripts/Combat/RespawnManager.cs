@@ -25,7 +25,9 @@ public class RespawnManager : NetworkBehaviour
         UserData killerUserdata = ServerSingleton.Instance.NetServer.GetUserDataByClientID(killerID);
         UserData victimUserData = ServerSingleton.Instance.NetServer.GetUserDataByClientID(player.OwnerClientId);
 
-        if(victimUserData != null)
+        RankBoardBehaviour.Instance.UpdateScore(player.OwnerClientId, 0);
+
+        if (victimUserData != null)
         {
             Debug.Log($"{victimUserData.username} is dead by {killerUserdata.username} [{killerID}]");
             

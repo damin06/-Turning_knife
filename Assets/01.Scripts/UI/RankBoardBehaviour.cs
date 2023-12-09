@@ -65,7 +65,7 @@ public class RankBoardBehaviour : NetworkBehaviour
         }
     }
 
-    private void UpdateScore(ulong clientID, int score)
+    public void UpdateScore(ulong clientID, int score)
     {
         for (int i = 0; i < _rankList.Count; i++)
         {
