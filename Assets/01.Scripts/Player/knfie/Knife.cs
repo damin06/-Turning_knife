@@ -12,6 +12,7 @@ public class Knife : NetworkBehaviour
     [SerializeField] private PlayerAiming _playerAiming;
     [SerializeField] private int _damage = 20;
     public NetworkVariable<int> knifeSocre = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<float> knifeScale = new NetworkVariable<float>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private float stretchFactor = 1f;
 
     public void AddknifeSocre(int socre)
@@ -41,31 +42,45 @@ public class Knife : NetworkBehaviour
     {
         if (!IsOwner)
             return;
-        //transform.localRotation = Quaternion.Euler(0, 0, -90);
+        transform.localRotation = Quaternion.Euler(0, 0, -90);
+        //transform.rotation = Quaternion.Euler(0, 0, -90);
+
     }
 
     private void ModifyKnifeSocre(int socre)
     {
-        knifeSocre.Value = Mathf.Clamp(knifeSocre.Value + socre, 0, 1000);
+        knifeSocre.Value += socre;
         SetKnifeScaleClientRpc();
     }
 
+    [ServerRpc]
+    private void SetScaleValueServerRpc(float scale)
+    {
+        knifeScale.Value = scale;
+    }
 
     [ClientRpc]
     private void SetKnifeScaleClientRpc()
     {
         if (!IsOwner)
             return;
-        float scale = Mathf.Clamp(knifeSocre.Value * stretchFactor, 1, 5);
 
-        if (scale <= 4)
+        Vector3 currentScale = transform.localScale;
+        Vector3 currentPosition = transform.position;
+
+        currentScale.x = Mathf.Clamp(currentScale.x + stretchFactor, 1, 15);
+        currentScale.y = Mathf.Clamp(currentScale.y + stretchFactor, 1, 15);
+
+        currentPosition.y += (currentScale.y - transform.localScale.y) * 0.5f;
+
+        if (currentScale.x >= 4.5f)
             _playerAnimation.ChangeEyeCloseServerRpc();
 
-        Vector3 newScale = new Vector3(scale, scale, transform.localScale.z);
-        transform.localScale = newScale;
+        transform.localScale = currentScale;
+        transform.position = currentPosition;
 
-        // z로테이션을 -90으로 고정하기
-        transform.rotation = Quaternion.Euler(0, 0, -90);
+        //transform.rotation = Quaternion.Euler(0, 0, -90);
+        SetScaleValueServerRpc(currentScale.x);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

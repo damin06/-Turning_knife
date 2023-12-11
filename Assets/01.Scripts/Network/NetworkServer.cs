@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UserData
@@ -76,7 +77,7 @@ public class NetworkServer : IDisposable
         // 기본 리스폰은 Vector3.zero에서 하되, 플러스로 해보고 싶은 사람들은
         // 스폰포인트를 랜덤으로 만들어서 그중에 한 곳에서 나오게 해봐라.
         //여기까지 오면 플레이어를 생성할 준비가 끝난거다.
-        NetworkObject instance = GameObject.Instantiate(_playerPrefab, Vector3.zero, Quaternion.identity);
+        NetworkObject instance = GameObject.Instantiate(_playerPrefab, ServerSingleton.Instance._respawnPostions._spawnPositions[UnityEngine.Random.Range(0, ServerSingleton.Instance._respawnPostions._spawnPositions.Count)], Quaternion.identity);
 
         //자 1번과제 여기서 PlayerPrefab을 만들고 알맞게 오너쉽을 설정하세요.
         instance.SpawnAsPlayerObject(clientID);

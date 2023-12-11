@@ -21,6 +21,7 @@ public class ServerSingleton : MonoBehaviour
     }
 
     public NetworkServer NetServer { get; private set; }
+    public RespawnPostions _respawnPostions;
 
     public void StartServer(NetworkObject playerPrefab, string ipAddress, ushort port)
     {

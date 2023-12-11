@@ -76,6 +76,14 @@ public class Player : NetworkBehaviour
     public void SetEyeColor(Color eyeColor)
     {
         _eyeRenderer.color = eyeColor;
+        SetEyeColorClientRpc(eyeColor);
+    }
+
+    [ClientRpc]
+    public void SetEyeColorClientRpc(Color eyeColor)
+    {
+        _eyeRenderer.color = eyeColor;
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

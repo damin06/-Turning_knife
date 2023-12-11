@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,10 +21,30 @@ public class ApplicationController : MonoBehaviour
         LaunchByMode(SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null);
     }
 
+    private string GetLocalIP()
+    {
+        IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+
+        foreach (IPAddress address in host.AddressList)
+        {
+            //인터넷트워크 IP의 경우만
+            if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                return address.ToString();
+            }
+        }
+        return string.Empty;
+    }
+
     private void LaunchByMode(bool isDedicatedServer)
     {
         if (isDedicatedServer)
         {
+            //string ipAdress = GetLocalIP();
+            //if(!string.IsNullOrEmpty(ipAdress))
+            //{
+            //    _ipAddress = ipAdress;
+            //}
             //서버 만들어주고.
             ServerSingleton server = Instantiate(_serverPrefab, transform);
             server.StartServer(_playerPrefab, _ipAddress, _port);

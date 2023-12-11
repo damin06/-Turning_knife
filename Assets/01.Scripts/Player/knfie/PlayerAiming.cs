@@ -7,7 +7,8 @@ public class PlayerAiming : NetworkBehaviour
 {
     public NetworkVariable<int> _curDir = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private Transform _handTrm;
-    private NetworkVariable<float> _rotateSpeed = new NetworkVariable<float>(180, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private float _maxRotateSpeed = 180;
+    public NetworkVariable<float> _rotateSpeed = new NetworkVariable<float>(180, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private float curZRoate;
     private PlayerAnimation _playerAnimation;
     private Knife _Knife;
@@ -16,9 +17,9 @@ public class PlayerAiming : NetworkBehaviour
     {
         if (!IsServer)
             return;
-        _Knife.knifeSocre.OnValueChanged += (int previousValue, int newValue) =>
+        _Knife.knifeScale.OnValueChanged += (float previousValue, float newValue) =>
         {
-            _rotateSpeed.Value /= newValue;
+            _rotateSpeed.Value = _maxRotateSpeed -= newValue * 10;
         };
     }
 
@@ -26,9 +27,9 @@ public class PlayerAiming : NetworkBehaviour
     {
         if (!IsServer)
             return;
-        _Knife.knifeSocre.OnValueChanged -= (int previousValue, int newValue) =>
+        _Knife.knifeScale.OnValueChanged -= (float previousValue, float newValue) =>
         {
-            _rotateSpeed.Value /= newValue;
+            _rotateSpeed.Value = _maxRotateSpeed -= newValue * 10;
         };
     }
 

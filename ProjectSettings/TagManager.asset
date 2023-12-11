@@ -50,6 +50,9 @@ TagManager:
   - name: EyeBackGround
     uniqueID: 1036417361
     locked: 0
+  - name: knife
+    uniqueID: 3428028783
+    locked: 0
   - name: Eye
     uniqueID: 2133715441
     locked: 0
