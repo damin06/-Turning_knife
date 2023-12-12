@@ -81,6 +81,7 @@ public class RankBoardBehaviour : NetworkBehaviour
             };
             break;
         }
+        AdjustScoreToUIList();
     }
 
     public override void OnNetworkDespawn()
@@ -159,12 +160,12 @@ public class RankBoardBehaviour : NetworkBehaviour
                 RemoveFromUIList(evt.Value.clientID);
                 break;
             case NetworkListEvent<RankBoardEntityState>.EventType.Value:
-                AdjustScoreToUIList(evt.Value);
+                AdjustScoreToUIList();
                 break;
         }
     }
 
-    private void AdjustScoreToUIList(RankBoardEntityState value)
+    private void AdjustScoreToUIList()
     {
         //값을 받아서 해당 UI를 찾아서 (올바른 클라이언트 ID) score를 갱신한다.
         // 선택 : 갱신후에는 UIList를 정렬하고 

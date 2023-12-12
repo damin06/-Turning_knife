@@ -2032,7 +2032,7 @@ MonoBehaviour:
     m_InternalValue: 1
   knifeScale:
     m_InternalValue: 1
-  stretchFactor: 1.21
+  stretchFactor: 0.5
 --- !u!1 &7344601665632648669
 GameObject:
   m_ObjectHideFlags: 0

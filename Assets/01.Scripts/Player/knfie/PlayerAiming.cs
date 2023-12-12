@@ -19,7 +19,7 @@ public class PlayerAiming : NetworkBehaviour
             return;
         _Knife.knifeScale.OnValueChanged += (float previousValue, float newValue) =>
         {
-            _rotateSpeed.Value = _maxRotateSpeed -= newValue * 10;
+            _rotateSpeed.Value = _maxRotateSpeed -= newValue * 17;
         };
     }
 
@@ -29,7 +29,7 @@ public class PlayerAiming : NetworkBehaviour
             return;
         _Knife.knifeScale.OnValueChanged -= (float previousValue, float newValue) =>
         {
-            _rotateSpeed.Value = _maxRotateSpeed -= newValue * 10;
+            _rotateSpeed.Value = _maxRotateSpeed -= newValue * 17;
         };
     }
 

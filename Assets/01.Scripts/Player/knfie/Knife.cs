@@ -68,12 +68,12 @@ public class Knife : NetworkBehaviour
         Vector3 currentScale = transform.localScale;
         Vector3 currentPosition = transform.position;
 
-        currentScale.x = Mathf.Clamp(currentScale.x + stretchFactor, 1, 15);
-        currentScale.y = Mathf.Clamp(currentScale.y + stretchFactor, 1, 15);
+        currentScale.x = Mathf.Clamp(currentScale.x + stretchFactor, 1, 5);
+        currentScale.y = Mathf.Clamp(currentScale.y + stretchFactor, 1, 5);
 
         currentPosition.y += (currentScale.y - transform.localScale.y) * 0.5f;
 
-        if (currentScale.x >= 4.5f)
+        if (currentScale.x >= 2.5f)
             _playerAnimation.ChangeEyeCloseServerRpc();
 
         transform.localScale = currentScale;

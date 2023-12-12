@@ -9948,6 +9948,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a2d22b9769b8a41a475935e11c47df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_IpAdressInput: {fileID: 0}
   m_nameInput: {fileID: 1190052227}
 --- !u!114 &2050586911
 MonoBehaviour:
